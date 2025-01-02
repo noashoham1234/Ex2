@@ -1,40 +1,33 @@
 public class Spreadsheet {
-    private Cell[][] array;
+    private firstCell[][] array;
+    private int width;
+    private int height;
 
+    //constructor
     public Spreadsheet() {
-        this.array = new Cell[100][23]; // there is one row for the letters and one coulomb for the numbers
+        this.array = new firstCell[100][23]; // there is one row for the letters and one coulomb for the numbers
     }
 
+    //copy constructor
     public Spreadsheet(int x, int y) {
-        this.array = new Cell[x][y];
+        this.array = new firstCell[x][y];
     }
 
-    public Cell getCell(int x, int y) {
-        Cell ans = this.array[x][y];
+    public firstCell getCell(int x, int y) {
+        firstCell ans = this.array[x][y];
         return ans;
     }
 
-    public void setCell(int x, int y, Cell c) {
+    public void setCell(int x, int y, firstCell c) {
         this.array[x][y] = c;
     }
 
-    public int width() {
-        int ans = 0;
-        return ans;
-
-    }
-
-    public int height() {
+    public int xCell(firstCell c) {
         int ans = 0;
         return ans;
     }
 
-    public int xCell(Cell c) {
-        int ans = 0;
-        return ans;
-    }
-
-    public int yCell(Cell c) {
+    public int yCell(firstCell c) {
         int ans = 0;
         return ans;
     }
