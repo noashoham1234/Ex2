@@ -94,7 +94,7 @@ public class firstCell {
         return ans;  // If all checks pass, the formula is valid
     }
 
-    public double computeForm(String form) {
+    public static double computeForm(String form) {
         double ans = -1.0;
         // Remove '=' from the beginning
         if (form.startsWith("=")) {
@@ -106,7 +106,7 @@ public class firstCell {
         return ans;
     }
 
-    private double compute(String str) {
+    private static double compute(String str) {
         // Go over all the parentheses first
         while (str.contains("(")) {
             int startIdx = str.lastIndexOf("(");
@@ -120,7 +120,7 @@ public class firstCell {
         return calculate(str);
     }
 
-    private double calculate(String str) {
+    private static double calculate(String str) {
         // Starting with multiply and divide then add and subtract
         str = calculateOperator(str, "*");
         str = calculateOperator(str, "/");
@@ -130,7 +130,7 @@ public class firstCell {
         return Double.parseDouble(str);
     }
 
-    private String calculateOperator(String str, String operator) {
+    private static String calculateOperator(String str, String operator) {
         int pos = str.indexOf(operator);
         while (pos != -1) {
             int leftPos = findLeftOperand(str, pos);
@@ -164,7 +164,7 @@ public class firstCell {
         return str;
     }
 
-    private int findLeftOperand(String s, int operatorPos) {
+    private static int findLeftOperand(String s, int operatorPos) {
         int leftPos = operatorPos - 1;
         while (leftPos >= 0 && (Character.isDigit(s.charAt(leftPos)) || s.charAt(leftPos) == '.')) {
             leftPos--;
@@ -172,7 +172,7 @@ public class firstCell {
         return leftPos + 1;
     }
 
-    private int findRightOperand(String s, int operatorPos) {
+    private static int findRightOperand(String s, int operatorPos) {
         int rightPos = operatorPos + 1;
         while (rightPos < s.length() && (Character.isDigit(s.charAt(rightPos)) || s.charAt(rightPos) == '.')) {
             rightPos++;
