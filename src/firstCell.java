@@ -14,7 +14,7 @@ public class firstCell {
     }
 
     public String getData() {
-        return data;
+        return this.data;
     }
 
     public boolean isNumber(String text) {
@@ -30,7 +30,8 @@ public class firstCell {
         return ans;
     }
 
-    public boolean areParenthesesBalanced(String txt) {
+    public boolean areSograimBalanced(String txt) {
+        boolean ans = true;
         int count = 0;
 
         for (int i = 0; i < txt.length(); i++) {
@@ -41,11 +42,14 @@ public class firstCell {
                 count--;
                 // If the parentheses are unbalanced, return false immediately
                 if (count < 0) {
-                    return false;
+                    ans = false;
                 }
             }
         }
-        return count == 0;  // If count is zero, the parentheses are balanced
+        if (count == 0) {
+            ans = true;  // If count is zero, the parentheses are balanced
+        }
+        return ans;
     }
 
     public boolean isForm(String text) {
@@ -61,7 +65,7 @@ public class firstCell {
             ans = false;
         }
 
-        if (!areParenthesesBalanced(expression)) {
+        if (!areSograimBalanced(expression)) {
             ans = false;  // Check for balanced parentheses
         }
 
@@ -90,64 +94,92 @@ public class firstCell {
         return ans;  // If all checks pass, the formula is valid
     }
 
-
-//    public boolean sograimAreGood (String txt){
-//        boolean ans = false;
-//        int count = 0;
-//
-//        for (int i = 0; i < txt.length(); i++) {
-//            Character current = txt.charAt(i);
-//            //checks if the number of ( and ) are equal
-//            if (current == '(') {
-//                count++;
-//            } else if (current == ')') {
-//                count--;
-//            }
-//        }
-//        if (count == 0){
-//            return true;
-//        }
-//        return ans;
-//    }
-//
-//    public boolean isForm(String text) {
-//        boolean ans = false;
-//        String correctChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-./*()";
-//        if (text.substring(0, 1).equals("=")) {
-//            String newText = text.substring(1);
-//            if (newText.matches(correctChars)) {
-//                for (int i = 0; i < newText.length(); i++) {
-//                    Character current = newText.charAt(i);
-//
-//                    if (sograimAreGood(newText)) {
-//                        if (Character.isLetter(current) && Character.isDigit(newText.charAt(i + 1))) {
-//                            if (current == '.' && Character.isDigit(newText.charAt(i - 1)) && Character.isDigit(newText.charAt(i + 1))) {
-//                                if ((current == '+' || current == '-' || current == '*' || current == '/') && (Character.isDigit(newText.charAt(i + 1)) || Character.isLetter(newText.charAt(i + 1)))) {
-//                                    ans = true;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return ans;
-//    }
-
-    public String computeForm(String form) {
-        String ans = "";
-        if (isNumber(form) || isText(form)) {
-            ans = form;
+    public double computeForm(String form) {
+        double ans = -1.0;
+        // Remove '=' from the beginning
+        if (form.startsWith("=")) {
+            form = form.substring(1);
         }
-        if (!isForm(form)) {
-            ans = "ERR_FORM";
-        } else {
-
-        }
-
+        //Remove all the spaces
+        String newForm = form.replace(" ", "");
+        ans = compute(newForm);
         return ans;
-
     }
+
+    private double compute(String str) {
+        // Go over all the parentheses first
+        while (str.contains("(")) {
+            int startIdx = str.lastIndexOf("(");
+            int endIdx = str.indexOf(")", startIdx);
+            String subStr = str.substring(startIdx + 1, endIdx);
+            double result = compute(subStr);
+            str = str.substring(0, startIdx) + result + str.substring(endIdx + 1);
+        }
+
+        // Sends to the math operators to calculate
+        return calculate(str);
+    }
+
+    private double calculate(String str) {
+        // Starting with multiply and divide then add and subtract
+        str = calculateOperator(str, "*");
+        str = calculateOperator(str, "/");
+        str = calculateOperator(str, "+");
+        str = calculateOperator(str, "-");
+
+        return Double.parseDouble(str);
+    }
+
+    private String calculateOperator(String str, String operator) {
+        int pos = str.indexOf(operator);
+        while (pos != -1) {
+            int leftPos = findLeftOperand(str, pos);
+            int rightPos = findRightOperand(str, pos);
+            String leftOperand = str.substring(leftPos, pos).trim();
+            String rightOperand = str.substring(pos + 1, rightPos).trim();
+
+            double leftValue = Double.parseDouble(leftOperand);
+            double rightValue = Double.parseDouble(rightOperand);
+
+            double result = 0;
+            switch (operator) {
+                case "+":
+                    result = leftValue + rightValue;
+                    break;
+                case "-":
+                    result = leftValue - rightValue;
+                    break;
+                case "*":
+                    result = leftValue * rightValue;
+                    break;
+                case "/":
+                    if (rightValue == 0) throw new ArithmeticException("Division by zero");
+                    result = leftValue / rightValue;
+                    break;
+            }
+
+            str = str.substring(0, leftPos) + result + str.substring(rightPos);
+            pos = str.indexOf(operator);
+        }
+        return str;
+    }
+
+    private int findLeftOperand(String s, int operatorPos) {
+        int leftPos = operatorPos - 1;
+        while (leftPos >= 0 && (Character.isDigit(s.charAt(leftPos)) || s.charAt(leftPos) == '.')) {
+            leftPos--;
+        }
+        return leftPos + 1;
+    }
+
+    private int findRightOperand(String s, int operatorPos) {
+        int rightPos = operatorPos + 1;
+        while (rightPos < s.length() && (Character.isDigit(s.charAt(rightPos)) || s.charAt(rightPos) == '.')) {
+            rightPos++;
+        }
+        return rightPos;
+    }
+
 
     public String toString() {
         return "[" + data + "]";
