@@ -78,8 +78,8 @@ public class Spreadsheet {
         return ans;
     }
 
-    public int[] depth() {
-        int[] ans = [];
-        return ans;
-    }
+//    public int[] depth() {
+//        int[] ans = [];
+//        return ans;
+//    }
 }
