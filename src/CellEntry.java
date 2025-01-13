@@ -8,6 +8,7 @@ public class CellEntry implements Index2D {
     public CellEntry() {
         this.x = 0;
         this.y = 0;
+
     }
 
     public CellEntry(int x, int y) {
