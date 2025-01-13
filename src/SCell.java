@@ -3,19 +3,16 @@
 public class SCell implements Cell {
     private String line;
     private int type;
-    // Add your code here
+    private int order;
 
     public SCell(String s) {
-        // Add your code here
+        this.order = 0;
         setData(s);
     }
 
     @Override
     public int getOrder() {
-        // Add your code here
-
-        return 0;
-        /////////////////////
+        return this.order;
     }
 
     //@Override
@@ -26,48 +23,59 @@ public class SCell implements Cell {
 
     @Override
     public void setData(String s) {
-//        if () {
-            line = s;
-//        }
-        /////////////////////
+        this.line = s;
+        this.type = determineType(s);
     }
 
     @Override
     public String getData() {
-        return line;
+        return this.line;
     }
 
     @Override
     public int getType() {
-        return type;
+        return this.type;
     }
 
     @Override
     public void setType(int t) {
-        type = t;
+        this.type = t;
     }
 
     @Override
     public void setOrder(int t) {
-        // Add your code here
+        this.order = t;
+    }
 
+    private int determineType(String s) {
+        if (s.startsWith("=")) return Ex2Utils.FORM;
+        try {
+            Double.parseDouble(s);
+            return Ex2Utils.NUMBER;
+        } catch (NumberFormatException e) {
+            return Ex2Utils.TEXT;
+        }
     }
 
 
-    public boolean isNumber(String text) {
-        boolean ans = text.matches("-?\\d+(\\.\\d+)?"); //regex that checks if the string is a number it could be a decimal number or even a negative number.
-        return ans;
+    public static boolean isNumber(String text) {
+        return text.matches("-?\\d+(\\.\\d+)?"); //regex that checks if the string is a number it could be a decimal number or even a negative number.
     }
 
-    public boolean isText(String text) {
+    public static boolean isText(String text) {
         boolean ans = true;
-        if (text.substring(0, 1).equals("=")) {
+        if (text.isEmpty()) {
+            ans = false;
+        } else if (text.equals(" ")) {
+            return false;
+        } else if (text.charAt(0) == '=') {
             ans = false;
         }
+
         return ans;
     }
 
-    public boolean areSograimBalanced(String txt) {
+    public static boolean areSograimBalanced(String txt) {
         boolean ans = true;
         int count = 0;
 
@@ -89,7 +97,8 @@ public class SCell implements Cell {
         return ans;
     }
 
-    public boolean isForm(String text) {
+    public static boolean isForm(String text) {
+//        String text = this.line;
         boolean ans = true;
         if (text.isEmpty() || !text.startsWith("=")) {
             ans = false;  // The formula must start with '='
@@ -131,19 +140,24 @@ public class SCell implements Cell {
         return ans;  // If all checks pass, the formula is valid
     }
 
-    public static double computeForm(String form) {
+    public double computeForm() {
+        String form = this.line;
+
         double ans = -1.0;
-        // Remove '=' from the beginning
-        if (form.startsWith("=")) {
-            form = form.substring(1);
+        if (isForm(form)) {
+            // Remove '=' from the beginning
+            if (form.startsWith("=")) {
+                form = form.substring(1);
+            }
+            //Remove all the spaces
+            String newForm = form.replace(" ", "");
+            ans = compute(newForm);
         }
-        //Remove all the spaces
-        String newForm = form.replace(" ", "");
-        ans = compute(newForm);
         return ans;
+
     }
 
-    private static double compute(String str) {
+    private double compute(String str) {
         // Go over all the parentheses first
         while (str.contains("(")) {
             int startIdx = str.lastIndexOf("(");
@@ -157,7 +171,7 @@ public class SCell implements Cell {
         return calculate(str);
     }
 
-    private static double calculate(String str) {
+    private double calculate(String str) {
         // Starting with multiply and divide then add and subtract
         str = calculateOperator(str, "*");
         str = calculateOperator(str, "/");
@@ -167,7 +181,7 @@ public class SCell implements Cell {
         return Double.parseDouble(str);
     }
 
-    private static String calculateOperator(String str, String operator) {
+    private String calculateOperator(String str, String operator) {
         int pos = str.indexOf(operator);
         while (pos != -1) {
             int leftPos = findLeftOperand(str, pos);
@@ -201,7 +215,7 @@ public class SCell implements Cell {
         return str;
     }
 
-    private static int findLeftOperand(String s, int operatorPos) {
+    private int findLeftOperand(String s, int operatorPos) {
         int leftPos = operatorPos - 1;
         while (leftPos >= 0 && (Character.isDigit(s.charAt(leftPos)) || s.charAt(leftPos) == '.')) {
             leftPos--;
@@ -209,7 +223,7 @@ public class SCell implements Cell {
         return leftPos + 1;
     }
 
-    private static int findRightOperand(String s, int operatorPos) {
+    private int findRightOperand(String s, int operatorPos) {
         int rightPos = operatorPos + 1;
         while (rightPos < s.length() && (Character.isDigit(s.charAt(rightPos)) || s.charAt(rightPos) == '.')) {
             rightPos++;
